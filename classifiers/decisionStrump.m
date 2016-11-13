@@ -1,7 +1,7 @@
 classdef decisionStrump
 %
 % model = decisionStrump(0.2).train(data,labels);
-% err = model.test(data,labels);
+% err = model.test(data,labels).err();
 %
 % Dvlp log:
 % 11.7
@@ -11,6 +11,8 @@ classdef decisionStrump
 %
 %   2. for testing method, a result set like comp61011 tools may need to be
 %   developed to plot the boundary
+%11.13
+%   update the error function to meet the assist tools requirement
 %
     properties
         lr = 0.1;
@@ -37,10 +39,21 @@ classdef decisionStrump
             end
         end
         
-        function res = test(this,data,labels)
+        function guess = test(this,data,labels)
             [dataNum, ~] = size(data);
-            numErr = numberOfErrors(this,data,labels);
-            res = numErr/dataNum;
+            predictedlabels = zeros(dataNum,1);
+            for i = 1:dataNum
+                if(data(i,1)>this.threshold) 
+                    predictedlabels(i) = 1;
+                else
+                    predictedlabels(i) = 0;
+                end
+            end
+            % return the predictions --- this bit is necessary for mlotools
+            guess = results(predictedlabels);
+            if exist('labels','var')
+                guess.addtruelabels(labels);
+            end
             
         end
         

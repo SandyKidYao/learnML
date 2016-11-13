@@ -1,7 +1,7 @@
 classdef perceptron
 %
 % model = perceptron(0.1,100).train(data,labels);
-% err = model.test(data,labels);
+% err = model.test(data,labels).err();
 %
     
     properties
@@ -34,18 +34,23 @@ classdef perceptron
             end
         end
         
-        function err = test(this,data,labels)
+        function guess = test(this,data,labels)
             [dataNum,~] = size(data);
-            err=0;
+            predictedlabels = zeros(dataNum,1);
             for j = 1:dataNum
-                tmplabel = (labels(j)-0.5)*2;
                 tmpdata = data(j,:);
                 fx = tmpdata*this.weights + this.bias;
-                if(tmplabel*fx<0)
-                    err=err+1;
+                if(fx<0)
+                    predictedlabels(j) = 0;
+                else
+                    predictedlabels(j) = 1;
                 end
             end
-            err = err/dataNum;
+            % return the predictions --- this bit is necessary for mlotools
+            guess = results(predictedlabels);
+            if exist('labels','var')
+                guess.addtruelabels(labels);
+            end
         end
     end
     
